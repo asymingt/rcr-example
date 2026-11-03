@@ -277,7 +277,7 @@ test --run_under=@rosdistro//python:run_test_isolated
 
 ## STATIC compilation
 
-build:portable --@rosdistro//:rmw=rmw_zenoh_cpp
+build:portable --@rosdistro//:rmw=rmw_fastrtps_cpp
 build:portable -c opt
 build:portable --dynamic_mode=off
 build:portable --strip=always
