@@ -1,0 +1,185 @@
+# Copyright 2026 Open Source Robotics Foundation, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+module(
+    name = "rcr-example",
+)
+
+# BCR MODULES ########################################################################
+
+bazel_dep(name = "llvm", version = "0.8.25.rcr.0")
+bazel_dep(name = "platforms", version = "1.1.0")
+bazel_dep(name = "protobuf", version = "36.2")
+bazel_dep(name = "rules_cc", version = "0.2.26.rcr.0")
+bazel_dep(name = "rules_cuda", version = "0.3.0.rcr.0")
+bazel_dep(name = "rules_go", version = "0.60.0")
+bazel_dep(name = "rules_python", version = "2.4.5")
+bazel_dep(name = "rules_rs", version = "0.1.0")
+bazel_dep(name = "rules_shell", version = "0.8.0")
+
+# RCR MODULES ########################################################################
+
+# Declare the RCR variant and release:
+bazel_dep(name = "desktop_full", version = "lyrical.2026-10-05.rcr.0")
+# Declare 0.0.0 versions for the ROS modules you want in the variant above.
+bazel_dep(name = "examples_rclcpp_minimal_publisher", version = "0.0.0")
+bazel_dep(name = "examples_rclcpp_minimal_subscriber", version = "0.0.0")
+bazel_dep(name = "rosdistro", version = "lyrical.2026-10-05.rcr.1")
+bazel_dep(name = "rviz2", version = "0.0.0")
+# Anything outside the variant needs an explicit version to be loaded:
+bazel_dep(name = "nav2_bringup", version = "1.5.2-2.rcr.0")
+bazel_dep(name = "ur_simulation_gz", version = "2.5.0-3.rcr.2")
+
+# TOOLCHAINS #########################################################################
+
+# Register our hermetic compiler (clang)
+register_toolchains("@llvm//toolchain:all")
+
+# Extend the hermetic macOS SDK sysroot (@llvm//extensions:osx.bzl) with the
+# frameworks our dependencies needed on OSX.
+# WebKit and JavaScriptCore (QtWebView's macOS plugin) are symlinks into
+# System/Cryptexes/OS in the macOS 26 SDK; the staged llvm module's
+# osx_cryptex_frameworks.patch (bcr_staging/modules/llvm/*/patches/)
+# extracts the link targets too, so they resolve (the darwin sandbox rejects
+# dangling links whenever macOS is the execution platform).
+osx = use_extension("@llvm//extensions:osx.bzl", "osx")
+osx.frameworks(
+    names = [
+        "AVFAudio",
+        "AVFoundation",
+        "AVRouting",
+        "Accelerate",
+        "AppKit",
+        "ApplicationServices",
+        "AudioToolbox",
+        "AudioUnit",
+        "CFNetwork",
+        "Carbon",
+        "CloudKit",
+        "Cocoa",
+        "ColorSync",
+        "CoreAudio",
+        "CoreAudioTypes",
+        "CoreBluetooth",
+        "CoreData",
+        "CoreFoundation",
+        "CoreGraphics",
+        "CoreHaptics",
+        "CoreImage",
+        "CoreLocation",
+        "CoreMIDI",
+        "CoreMedia",
+        "CoreServices",
+        "CoreText",
+        "CoreVideo",
+        "DiskArbitration",
+        "FontServices",
+        "ForceFeedback",
+        "Foundation",
+        "GameController",
+        "IOBluetooth",
+        "IOKit",
+        "IOSurface",
+        "JavaScriptCore",
+        "ImageIO",
+        "Kernel",
+        "MediaToolbox",
+        "Metal",
+        "MetalKit",
+        "ModelIO",
+        "Network",
+        "OSLog",
+        "OpenGL",
+        "PCSC",
+        "PrintCore",
+        "QuartzCore",
+        "Security",
+        "Symbols",
+        "SystemConfiguration",
+        "UniformTypeIdentifiers",
+        "VideoToolbox",
+        "WebKit",
+        "_LocationEssentials",
+    ],
+)
+
+# QtPrintSupport on macOS (qcocoaprintdevice.mm) uses the CUPS PPD API and
+# links -lcups; libcups.tbd is not in the default minimal sysroot.
+osx.libraries(names = ["libcups"])
+
+# Python configuration
+
+PYTHON_VERSIONS = ["3.11", "3.12", "3.13", "3.14"]
+DEFAULT_PYTHON_VERSION = "3.12"
+
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+[
+    python.toolchain(
+        is_default = v == DEFAULT_PYTHON_VERSION,
+        python_version = v,
+    )
+    for v in PYTHON_VERSIONS
+]
+
+uv = use_extension("@rules_python//python/uv:uv.bzl", "uv")
+uv.configure(version = "0.9.7")
+
+# C / C++ configuration
+
+llvm = use_extension("@llvm//extensions:llvm.bzl", "llvm")
+llvm.version(llvm_version = "21.1.8")
+llvm.configure(
+    targets = [
+        "AArch64",
+        "X86",
+    ],
+)
+use_repo(llvm, "llvm-project")
+
+# Rust configuration
+
+rs_toolchains = use_extension("@rules_rs//rs/toolchains:module_extension.bzl", "toolchains")
+rs_toolchains.toolchain(
+    edition = "2021",
+    version = "1.93.0",
+)
+use_repo(rs_toolchains, "default_rust_toolchains")
+
+register_toolchains(
+    "@default_rust_toolchains//...",
+)
+
+# CUDA configuration
+
+cuda = use_extension("@rules_cuda//cuda:extensions.bzl", "toolchain")
+cuda.redist_json(
+    name = "rules_cuda_redist_json",
+    components = [
+        "cccl",
+        "cublas",
+        "cudart",
+        "cufft",
+        "cupti",
+        "curand",
+        "cusolver",
+        "cusparse",
+        "nvcc",
+        "nvjitlink",
+        "nvml",
+        "nvrtc",
+        "nvtx",
+    ],
+    version = "12.8.1",
+)
+cuda.toolkit(name = "cuda")
+use_repo(cuda, "cuda")

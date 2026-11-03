@@ -1,0 +1,8 @@
+platform(
+    name = "linux",
+    constraint_values = [
+        "@llvm//constraints/libc:gnu.2.34",
+    ],
+    parents = ["@platforms//host"],
+    visibility = ["//visibility:public"],
+)
