@@ -1,16 +1,17 @@
 # RCR Examples
 
-The ROS Central Registry (RCR) is a collection of Bazel modules for builfing 
+The ROS Central Registry (RCR) is a collection of Bazel modules for building ROS packages completely from source within Bazel. Some of its key feature are the following:
 
 - It is pinned at a very recent upstream release, `lyrical/2026-10-05`.
 - It has immutable modules as releases, ensuring long-term stability.
+- It supports FastRTPS, Zenoh, and CycloneDDS.
+- It supports both Mac and Linux on arm64 and x86_64.
 - It is tested with hermetic-llvm and supports cross-compilation.
 - It has unit tests to verify behavior correctness cross-platform.
 - It has most packages from rosdistro ported to Bazel.
 - It runs CI on desktop_full to make sure building and testing passes.
-- It supports both Mac and Linux on arm64 and x86_64.
-- It builds everything from source, including Qt 6.10.2.
-- It has a user-friendly web-based frontend: https://bazel.ros.org
+- It builds everything from source, including Qt 6.10.2 and libtorch.
+- It has a user-friendly web-based package manager: https://bazel.ros.org
 
 Make sure you are working in a session that has access to a display, as some examples launch GUIs.
 
