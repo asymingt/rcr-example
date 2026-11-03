@@ -339,3 +339,33 @@ collected 2 items
 
 ================
 ```
+
+If you want to see verbose output from the pytest engine, you need even more arguments:
+
+```json
+bazel test @rclpy//test:test_utilities \
+    --cache_test_results=False \
+    --test_output=all \
+    --test_arg=-vv \
+    --test_arg=-s \
+    --test_arg=-rA
+
+...
+
+../rclpy+/test/test_utilities.py::TestValidateRemoveRosArgs::test_remove_ros_args PASSED
+../rclpy+/test/test_utilities.py::TestUtilities::test_timeout_sec_to_nsec PASSED
+
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED ../rclpy+/test/test_utilities.py::TestValidateRemoveRosArgs::test_remove_ros_args
+PASSED ../rclpy+/test/test_utilities.py::TestUtilities::test_timeout_sec_to_nsec
+============================== 2 passed in 0.17s ===============================
+================================================================================
+INFO: Found 1 test target...
+Target @@rclpy+//test:test_utilities up-to-date:
+  bazel-bin/external/rclpy+/test/test_utilities
+INFO: Elapsed time: 10.542s, Critical Path: 3.96s
+INFO: 5 processes: 19745 action cache hit, 4 internal, 2 darwin-sandbox.
+INFO: Build completed successfully, 5 total actions
+@rclpy//test:test_utilities                                              PASSED in 1.3s
+```
