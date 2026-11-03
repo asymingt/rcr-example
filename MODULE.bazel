@@ -34,6 +34,7 @@ bazel_dep(name = "desktop_full", version = "lyrical.2026-10-05.rcr.0")
 # Declare 0.0.0 versions for the ROS modules you want in the variant above.
 bazel_dep(name = "examples_rclcpp_minimal_publisher", version = "0.0.0")
 bazel_dep(name = "examples_rclcpp_minimal_subscriber", version = "0.0.0")
+bazel_dep(name = "rclpy", version = "0.0.0")
 bazel_dep(name = "rmw_zenoh_cpp", version = "0.0.0")
 bazel_dep(name = "rosdistro", version = "lyrical.2026-10-05.rcr.1")
 bazel_dep(name = "rviz2", version = "0.0.0")

@@ -330,3 +330,11 @@ common:rtsan --copt -O0
 common:rtsan --copt -g
 common:rtsan --copt -fno-omit-frame-pointer
 test:rtsan --test_tag_filters=-nortsan
+
+# Jetson Orin
+
+common:jetson-orin --platforms=@llvm//platforms/config:linux_aarch64_gnu.2.35
+common:jetson-orin --copt=-O3
+common:jetson-orin --copt=-march=armv8.2-a+crypto
+common:jetson-orin --copt=-mcpu=cortex-a78ae
+common:jetson-orin --copt=-mtune=cortex-a78ae
