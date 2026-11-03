@@ -171,7 +171,7 @@ index 6b2fa67..a2d19e3 100644
 
 To make sure that all tests in `@rclpy` pass, you can run this command (after the edit above). Great care is taken to launch each test in its own network sandbox with multicast disabled, and a cleanup script to ensure no processes are left dangling after the test exits. This gives a nice deterministic result:
 
-```json
+```
 bazel test @rclpy//...
 INFO: Invocation ID: 339f695d-1180-4fb5-b9dd-4acccfbae754
 INFO: Analyzed 65 targets (2102 packages loaded, 133879 targets configured, 3822 aspect applications).
@@ -243,7 +243,7 @@ Executed 58 out of 58 tests: 58 tests pass.
 
 If you run the test again, Bazel is clever enough to notice that nothing upstream has changed for every test in the suite, and so it gives you back the cached test results.
 
-```json
+```
 $ bazel test @rclpy//...
 INFO: Invocation ID: 81ff401e-4205-422f-9329-58dbb8596f62
 INFO: Analyzed 65 targets (0 packages loaded, 0 targets configured).
@@ -315,7 +315,7 @@ Executed 0 out of 58 tests: 58 tests pass.
 
 If you really want to run a specific test again:
 
-```json
+```
 $ bazel run @rclpy//test:test_utilities --cache_test_results=False --test_output=streamed
 INFO: Invocation ID: b818af55-9839-4ab5-aa32-22c012de44f9
 WARNING: Build option --run_under has changed, discarding analysis cache (this can be expensive, see https://bazel.build/advanced/performance/iteration-speed).
@@ -342,7 +342,7 @@ collected 2 items
 
 If you want to see verbose output from the pytest engine, you need even more arguments:
 
-```json
+```
 bazel test @rclpy//test:test_utilities \
     --cache_test_results=False \
     --test_output=all \
