@@ -1,6 +1,6 @@
 # RCR Examples
 
-The ROS Central Registry (RCR) is a collection of Bazel modules for building ROS packages completely from source within Bazel. Some of its key feature are the following:
+The ROS Central Registry (RCR) is a collection of Bazel modules for building ROS packages completely from source within Bazel. Some of its key features are the following:
 
 - It is pinned at a very recent upstream release, `lyrical/2026-10-05`.
 - It has immutable modules as releases, ensuring long-term stability.
@@ -9,7 +9,7 @@ The ROS Central Registry (RCR) is a collection of Bazel modules for building ROS
 - It is tested with hermetic-llvm and supports cross-compilation.
 - It has unit tests to verify behavior correctness cross-platform.
 - It has most packages from rosdistro ported to Bazel.
-- It runs CI on desktop_full to make sure building and testing passes.
+- It runs CI on desktop_full to make sure building and testing pass.
 - It builds everything from source, including Qt 6.10.2 and libtorch.
 - It has a user-friendly web-based package manager: https://bazel.ros.org
 
@@ -32,7 +32,7 @@ curl -Lo ~/.local/bin/bazel \
 chmod +x  ~/.local/bin/bazel
 ```
 
-## MacOS Tahoe (arm64 only)
+## macOS Tahoe (arm64 only)
 
 Install the system SDK frameworks:
 
@@ -46,11 +46,11 @@ Install Homebrew and then the necessary tools:
 brew install bazelisk git
 ```
 
-For high-precision timing and benchmarks on macOS, timer coalescing can introduce millisecond jitter into your execution loops. We recommend disabling it before running and time-critical code, and then enabling it again afterwards:
+For high-precision timing and benchmarks on macOS, timer coalescing can introduce millisecond jitter into your execution loops. We recommend disabling it before running any time-critical code, and then enabling it again afterwards:
 
 ```
 sudo sysctl -w kern.timer.coalescing_enabled=0
-<run time critical code>
+<run time-critical code>
 sudo sysctl -w kern.timer.coalescing_enabled=1
 ```
 
@@ -93,7 +93,7 @@ bazel run @examples_rclcpp_minimal_subscriber//:subscriber_lambda \
 
 ## Rviz2
 
-Launch the Rviz2 robot simulator (needs a display)
+Launch the Rviz2 robot simulator (needs a display):
 
 ```
 bazel run @rviz2
@@ -101,9 +101,9 @@ bazel run @rviz2
 
 ![Basic pubsub example](images/rcr_example_rviz2.png)
 
-## Moveit
+## MoveIt
 
-Launch and end-to-end MoveIt example with a Universal Robot arm:
+Launch an end-to-end MoveIt example with a Universal Robot arm:
 
 ```
 bazel run @ur_simulation_gz//launch:ur_sim_moveit_launch
@@ -122,7 +122,7 @@ https://github.com/user-attachments/assets/acae149d-65d2-4c3e-8288-026dc91ff68b
 
 ## Statically compile a node and optimize for size
 
-To build portable librtaries you must specify which RMW middleware implementation you want to use, and then then `--config portable` to statically link it and perform size optimizations:
+To build portable binaries, you must specify which RMW middleware implementation you want to use, and then pass `--config portable` to statically link it and perform size optimizations:
 
 ```
 bazel build @examples_rclcpp_minimal_publisher//:publisher_lambda \
@@ -138,21 +138,21 @@ du -hs bazel-bin/external/examples_rclcpp_minimal_publisher+/publisher_lambda
 6.5M    bazel-bin/external/examples_rclcpp_minimal_publisher+/publisher_lambda
 ```
 
-Then you can use `otool -L` or `ldd` to see what it links to. For example, on Mac OS X it just requires the Foundation framework, libc++ and libSystem:
+Then you can use `otool -L` or `ldd` to see what it links to. For example, on macOS it just requires the Foundation framework, libc++, and libSystem:
 
 ```
 otool -L bazel-bin/external/examples_rclcpp_minimal_publisher+/publisher_lambda
 bazel-bin/external/examples_rclcpp_minimal_publisher+/publisher_lambda:
         /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5026.5.4)
         /usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)
-        /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.
+        /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.0)
 ```
 
 The `bazel-bin/external/examples_rclcpp_minimal_publisher+/publisher_lambda` binary should now be portable across any aarch64 (M-series Mac) with Foundation series 300 and above.
 
 # Next steps
 
-Take a look at https://bazel.ros.org to find ROS packages you'd like to test. When you find one, add it to the [MODULE.bazel](./MODULE.bazel) file and it becomes available with an `@` prefix. For example, `rclpy` is a package in `desktop_full` variant, so you can just import it this way (the `0.0.0` version is immediately overridden by the resolved version for the release):
+Take a look at https://bazel.ros.org to find ROS packages you'd like to test. When you find one, add it to the [MODULE.bazel](./MODULE.bazel) file and it becomes available with an `@` prefix. For example, `rclpy` is a package in the `desktop_full` variant, so you can just import it this way (the `0.0.0` version is immediately overridden by the resolved version for the release):
 
 ```diff
 diff --git a/MODULE.bazel b/MODULE.bazel
@@ -169,7 +169,7 @@ index 6b2fa67..a2d19e3 100644
  bazel_dep(name = "rviz2", version = "0.0.0")
 ```
 
-To make sure that all tests in `@rclpy` pass, you can run this command (after the edit above). Great care is taken to launch each test in its own network sandbox with multicast disabled, and a cleanup script to ensure no processes are left dangling after the test exists. This gives a nice deterministic result:
+To make sure that all tests in `@rclpy` pass, you can run this command (after the edit above). Great care is taken to launch each test in its own network sandbox with multicast disabled, and a cleanup script to ensure no processes are left dangling after the test exits. This gives a nice deterministic result:
 
 ```json
 bazel test @rclpy//...
@@ -313,11 +313,11 @@ INFO: Build completed successfully, 1 total action
 Executed 0 out of 58 tests: 58 tests pass.
 ```
 
-If you really want to run a specific test again
+If you really want to run a specific test again:
 
 ```json
 $ bazel run @rclpy//test:test_utilities --cache_test_results=False --test_output=streamed
-NFO: Invocation ID: b818af55-9839-4ab5-aa32-22c012de44f9
+INFO: Invocation ID: b818af55-9839-4ab5-aa32-22c012de44f9
 WARNING: Build option --run_under has changed, discarding analysis cache (this can be expensive, see https://bazel.build/advanced/performance/iteration-speed).
 INFO: Analyzed target @@rclpy+//test:test_utilities (0 packages loaded, 58709 targets configured, 3813 aspect applications).
 INFO: Found 1 target...
