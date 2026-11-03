@@ -82,7 +82,7 @@ bazel run @examples_rclcpp_minimal_subscriber//:subscriber_lambda
 Start up a zenohd router and then run a publisher and subscriber:
 
 ```
-bazel run @rmw_zenoh_cpp//:zenohd
+bazel run @rmw_zenoh_cpp//:rmw_zenohd
 bazel run @examples_rclcpp_minimal_publisher//:publisher_lambda \
     --run_env=RMW_IMPLEMENTATION=rmw_zenoh_cpp
 bazel run @examples_rclcpp_minimal_subscriber//:subscriber_lambda \
