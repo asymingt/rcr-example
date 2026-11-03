@@ -121,20 +121,33 @@ https://github.com/user-attachments/assets/acae149d-65d2-4c3e-8288-026dc91ff68b
 
 ## Statically compile a node and optimize for size
 
-```
-bazel build @examples_rclcpp_minimal_publisher//:publisher_lambda \
-    --config portable 
-
-```
-
-## Statically cross-compile a node for Jetson Orin
+To build portable librtaries you must specify which RMW middleware implementation you want to use, and then then `--config portable` to statically link it and perform size optimizations:
 
 ```
 bazel build @examples_rclcpp_minimal_publisher//:publisher_lambda \
-    --config portable \
-    --config jetson-orin
+    --@rosdistro//:rmw=rmw_cyclonedds_cpp \
+    --config portable
 
 ```
+
+Use `du -hs` to measure the resulting file size:
+
+```
+du -hs bazel-bin/external/examples_rclcpp_minimal_publisher+/publisher_lambda
+6.5M    bazel-bin/external/examples_rclcpp_minimal_publisher+/publisher_lambda
+```
+
+Then you can use `otool -L` or `ldd` to see what it links to. For example, on Mac OS X it just requires the Foundation framework, libc++ and libSystem:
+
+```
+otool -L bazel-bin/external/examples_rclcpp_minimal_publisher+/publisher_lambda
+bazel-bin/external/examples_rclcpp_minimal_publisher+/publisher_lambda:
+        /System/Library/Frameworks/Foundation.framework/Versions/C/Foundation (compatibility version 300.0.0, current version 5026.5.4)
+        /usr/lib/libc++.1.dylib (compatibility version 1.0.0, current version 2100.43.0)
+        /usr/lib/libSystem.B.dylib (compatibility version 1.0.0, current version 1356.0.
+```
+
+The `bazel-bin/external/examples_rclcpp_minimal_publisher+/publisher_lambda` binary should now be portable across any aarch64 (M-series Mac) with Foundation series 300 and above.
 
 # Next steps
 
