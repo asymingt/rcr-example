@@ -86,7 +86,6 @@ bazel run @rviz2
 
 ![Basic pubsub example](images/rcr_example_rviz2.png)
 
-
 ## Moveit
 
 Launch and end-to-end MoveIt example with a Universal Robot arm:
@@ -95,11 +94,15 @@ Launch and end-to-end MoveIt example with a Universal Robot arm:
 bazel run @ur_simulation_gz//launch:ur_sim_moveit_launch
 ```
 
+https://github.com/user-attachments/assets/11c95021-06bb-4ff8-b059-645d902e3f2b
+
 ## Nav2
 
 ```
 bazel run @nav2_bringup//launch:tb3_simulation_launch -- headless:=false
 ```
+
+https://github.com/user-attachments/assets/acae149d-65d2-4c3e-8288-026dc91ff68b
 
 # Statically compile a node
 
